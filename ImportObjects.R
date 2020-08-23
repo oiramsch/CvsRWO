@@ -27,14 +27,14 @@ objectGroup <- group_by(objectList, subject, age, setsize)
 summarise(objectGroup, totalCases = n(), 
           mean_answer_correct = mean(answer_correct), 
           sum_answer_correct = sum(answer_correct), 
-          sum_of_changes = sum(change), 
+          sum_of_changes = sum(change == 1),
+          sum_of_noChanges = sum(change == 0),
           falseAlarm = sum(signal_detection == 0), 
           correct_rejections = sum(signal_detection == 1),
           miss = sum(signal_detection == 2),
           hit = sum(signal_detection == 3), 
-          falseAlarmRate = falseAlarm/sum_of_changes, 
-          hitRate = hit/(totalCases - sum_of_changes)) %>% mutate(k = setsize*(hitRate-falseAlarmRate)) -> objectResult
-
-
-
-
+          totalOfChange = correct_rejections+falseAlarm,
+          totalOfHit = hit+miss,
+          falseAlarmRate = falseAlarm/totalOfChange, 
+          hitRate = hit/totalOfHit) %>% mutate(k = setsize*(hitRate-falseAlarmRate)) -> objectResult
+          
