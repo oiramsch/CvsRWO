@@ -23,8 +23,8 @@ objectList <- objectList %>% mutate(signal_detection_text = if_else(signal_detec
 #sumObjectAll <- count(objectList, setsize, signal_detection_text)
 #sumObjectByAgeSetSize <- count(objectList, age, setsize, signal_detection_text)
 #sumObjectBySubject <- count(objectList, subject, setsize, signal_detection_text)
-objectGroup <- group_by(objectList, subject, age, setsize)
-summarise(objectGroup, totalCases = n(), 
+objectGroupBySubAgeSet <- group_by(objectList, subject, age, setsize)
+summarise(objectGroupBySubAgeSet, totalCases = n(), 
           mean_answer_correct = mean(answer_correct), 
           sum_answer_correct = sum(answer_correct), 
           sum_of_changes = sum(change == 1),
@@ -37,4 +37,30 @@ summarise(objectGroup, totalCases = n(),
           totalOfHit = hit+miss,
           falseAlarmRate = falseAlarm/totalOfChange, 
           hitRate = hit/totalOfHit) %>% mutate(k = setsize*(hitRate-falseAlarmRate)) -> objectResult
-          
+objectGroupBySubject <- group_by(objectList, subject, age)
+summarise(objectGroupBySubject, 
+          SetSize2 = mean(answer_correct[setsize == 2]),
+          SetSize4 = mean(answer_correct[setsize == 4]),
+          SetSize6 = mean(answer_correct[setsize == 6]) ) -> objectResultSetSize
+
+objectGroupAge <- group_by(objectResult, age)
+summarise(objectGroupAge, 
+          SetSize2 = mean(mean_answer_correct[setsize == 2]),
+          SetSize4 = mean(mean_answer_correct[setsize == 4]),
+          SetSize6 = mean(mean_answer_correct[setsize == 6]),
+          hit_2 = mean(hit[setsize == 2]),
+          hit_4 = mean(hit[setsize == 4]),
+          hit_6 = mean(hit[setsize == 6]),
+          miss_2 = mean(miss[setsize == 2]),
+          miss_4 = mean(miss[setsize == 4]),
+          miss_6 = mean(miss[setsize == 6]),
+          falseAlarmRate_Set_2 = mean(falseAlarmRate[setsize == 2]),
+          falseAlarmRate_Set_4 = mean(falseAlarmRate[setsize == 4]),
+          falseAlarmRate_Set_6 = mean(falseAlarmRate[setsize == 6]),
+          HitRate_Set_2 = mean(hitRate[setsize == 2]),
+          HitRate_Set_4 = mean(hitRate[setsize == 4]),
+          HitRate_Set_6 = mean(hitRate[setsize == 6]),
+          K_2 = mean(k[setsize == 2]),
+          K_4 = mean(k[setsize == 4]),
+          K_6 = mean(k[setsize == 6])) -> objectResultGroupAge
+
