@@ -24,4 +24,10 @@ colorList %>%
   mutate(signal_detection_text = car::recode(.$signal_detection, "0 = 'false alarm';1 = 'correct rejection'; 2 = 'miss'; 3 = 'hit'")) -> colorList
 
 colorGroup <- group_by(colorList, subject,age ,condition)
-summarize(colorGroup,totalCases = n(), correct_answer = sum(answer_correct == 1) , falseAlarm = sum(signal_detection == 0),correct_rejection = sum(signal_detection == 1), miss = sum(signal_detection == 2), hit = sum(signal_detection == 3)) %>% mutate (noChangeTotal = falseAlarm+correct_rejection) %>% mutate(changeTotal = miss+hit) %>% mutate(falseAlarmRate = falseAlarm / noChangeTotal) %>% mutate(hitRate = hit / changeTotal) %>% mutate (k = condition*(hitRate - falseAlarmRate)) -> colorListResult
+summarize(colorGroup,
+          totalCases = n(), 
+          correct_answer = sum(answer_correct == 1) , 
+          falseAlarm = sum(signal_detection == 0),
+          correct_rejection = sum(signal_detection == 1), 
+          miss = sum(signal_detection == 2), 
+          hit = sum(signal_detection == 3)) %>% mutate (noChangeTotal = falseAlarm+correct_rejection) %>% mutate(changeTotal = miss+hit) %>% mutate(falseAlarmRate = falseAlarm / noChangeTotal) %>% mutate(hitRate = hit / changeTotal) %>% mutate (k = condition*(hitRate - falseAlarmRate)) -> colorListResult
